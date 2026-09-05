@@ -1,3 +1,4 @@
+from datetime import datetime
 while True:
     choice=input("admin/user/exit")
     if choice.lower()=="admin":
@@ -106,7 +107,8 @@ while True:
                 amt=int(input("amount to withdraw"))
                 if data1[n]["balance"] >= amt and amt>0:
                     data1[n]["balance"]= data1[n]["balance"] - amt
-                    data1[n]["transaction"].append("withdraw",amt)
+                    date_time= datetime.now().strftime("%D-%M-%Y %H:%M:%S")
+                    data1[n]["transaction"].append(("withdraw", amt, date_time))
                     print("amount successfuly withdrawed")
                     print("remaining balance: ",data1[n]["balance"])
                 else:
@@ -115,7 +117,8 @@ while True:
                 amt=int(input("amount to deposit"))
                 if amt>0:
                     data1[n]["balance"]= data1[n]["balance"] + amt
-                    data1[n]["transaction"].append("deposit",amt)
+                    date_time= datetime.now().strftime("%D-%M-%Y %H:%M:%S")
+                    data1[n]["transaction"].append(("deposit", amt, date_time))
                     print("amount successfuly deposit")
                     print("balance: ",data1[n]["balance"])
                 else:
@@ -131,9 +134,10 @@ while True:
                 n1=int(input("enter id to which you want to transfer"))
                 if n1 in data1 and data1[n]["balance"] >= amt1 and n1 != n and amt1>0:
                     data1[n1]["balance"]= data1[n1]["balance"] + amt1
-                    data1[n1]["transaction"].append("deposit",amt1)
+                    date_time=datetime.now().strftime("%D-%M-%Y %H:%M:%S")
+                    data1[n1]["transaction"].append(("deposit", amt1, date_time))
                     data1[n]["balance"]= data1[n]["balance"] -  amt1
-                    data1[n]["transaction"].append("withdraw",amt1)
+                    data1[n]["transaction"].append(("withdraw", amt1, date_time))
                     print("balance: ",data1[n]["balance"])
                     print("balance: ",data1[n1]["balance"])
                 else:
