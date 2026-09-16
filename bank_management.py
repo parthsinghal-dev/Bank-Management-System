@@ -1,4 +1,10 @@
+import sqlite3
 from datetime import datetime
+connection= sqlite3.connect("bank_management.db")
+cursor= connection.cursor()
+cursor.execute("""create table if not exists users(user_id integer primary key, name text, address text, ph_no text, balance integer, password text )""")
+cursor.execute("""create table if not exists admins(admin_id integer primary key, name text, address text, ph_np text, password text)""")
+cursor.execute("""create table if not exists transactions(transaction_id integer primary key, user_id integer, type text, amount integer, balance integer, date_time text)""")
 while True:
     choice=input("admin/user/exit")
     if choice.lower()=="admin":
