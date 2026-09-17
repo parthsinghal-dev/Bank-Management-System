@@ -3,7 +3,7 @@ from datetime import datetime
 connection= sqlite3.connect("bank_management.db")
 cursor= connection.cursor()
 cursor.execute("""create table if not exists users(user_id integer primary key, name text, address text, ph_no text, balance integer, password text )""")
-cursor.execute("""create table if not exists admins(admin_id integer primary key, name text, address text, ph_np text, password text)""")
+cursor.execute("""create table if not exists admins(admin_id integer primary key, name text, address text, ph_no text, password text)""")
 cursor.execute("""create table if not exists transactions(transaction_id integer primary key, user_id integer, type text, amount integer, balance integer, date_time text)""")
 while True:
     choice=input("admin/user/exit")
@@ -23,20 +23,18 @@ while True:
         if n1 in data and data[n1]["password"]== password:
             if ch==1:
                 rem=int(input("enter id  to remove"))
-                if rem in data1:
-                    data1.pop(rem)
-                    print("successfully removed")
-                else:
-                    print("invalid data")
+                cursor.execute("""delete from users where user_id=?""", (rem,))
+                connection.commit()
+                print("successfully removed")
             elif ch==2:
                 transaction=[]
-                user_id= max(data1) + 1
                 name=input("enter name")
                 address=input("enter address")
                 ph_no=input("enter ph no")
                 initial_balance=int(input("enter balace commence"))
                 password=input("enter password for future login")
-                data1[user_id]={"name":name,"address":address,"ph_no":ph_no,"balance":initial_balance,"password":password,"transaction":transaction}
+                cursor.execute("""insert into users(name, address, ph_no, balance, password) values(?, ?, ?, ?, ?)""", (name, address, ph_no, initial_balance, password))
+                connection.commit()
                 print("user successfylly added")
             elif ch==3:
                 name=input("enter name admin")
@@ -44,39 +42,40 @@ while True:
                 ph_no=input("enter ph no")
                 password=input("enter password for future login")
                 admin_id= max(data) + 1
-                data[admin_id]={"name":name,"address":address,"ph_no":ph_no,"password":password}
+                cursor.execute("""insert into admins(admin_id, name, address, ph_no, password) values(?, ?, ?, ?, ?)""", (admin_id, name, address, ph_no, password))
+                connection.commit()
                 print("admin successfylly added")
             elif ch==4:
                 n=int(input("enter admin id to remove"))
-                if n in data:
-                    data.pop(n)
-                    print("admin successfylly removed")
-                else:
-                    print("please enter valid data")
+                cursor.execute("""delete from admins where admin_id=?""", (n,))
+                connection.commit()
+                print("admin successfylly removed")
             elif ch==5:
                 n=int(input("enter user id to update"))
-                if n in data1:
-                    print("what you want to update!")
-                    print("1 name")
-                    print("2 address")
-                    print("3 ph no")
-                    choose=int(input("enter your choice"))
-                    if choose==1:
-                        name=input("new name")
-                        data1[n]["name"]= name
-                        print("user name successfylly updated")
-                    elif choose==2:
-                        address=input("new address")
-                        data1[n]["address"]= address
-                        print("user address successfylly updated")
-                    elif choose==3:
-                        ph_no= input("new ph no.")
-                        data1[n]["ph_no"]= ph_no
-                        print("user phone no. successfylly updated")
-                    else:
-                        print("please enter valid data!")
+                print("what you want to update!")
+                print("1 name")
+                print("2 address")
+                print("3 ph no")
+                choose=int(input("enter your choice"))
+                if choose==1:
+                    name=input("new name")
+                    cursor.execute("""update users set name=? where user_id=?""", (name,n))
+                    connection.commit()
+                    print("user name successfylly updated")
+                elif choose==2:
+                    address=input("new address")
+                    cursor.execute("""update users set address=? where user_id=?""", (address,n))
+                    connection.commit()
+                    print("user address successfylly updated")
+                elif choose==3:
+                    ph_no= input("new ph no.")
+                    cursor.execute("""update users set ph_no=? where user_id=?""", (ph_no,n))
+                    connection.commit()
+                    print("user phone no. successfylly updated")
                 else:
                     print("please enter valid data!")
+            else:
+                print("please enter valid data!")
             elif ch==6:
                 n=int(input("enter user id to see transaction"))
                 if n in data1:
